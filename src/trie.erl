@@ -584,7 +584,7 @@ fold_match_element_1(Match, F, A, I, N, Offset, Prefix, Mid, Data)
     end;
 
 fold_match_element_1([$* | T] = Match, F, A, I, N, Offset, Prefix, Mid, Data) ->
-    {Node, Value} = erlang:element(I, Data),
+    {Node, Value} = erlang:element(I, Data),    
     case Node of
         {I0, I1, NextData} ->
             NewMid = [(Offset + I) | Mid],
@@ -2205,7 +2205,10 @@ wildcard_match_lists([_ | _], [$* | _]) ->
 wildcard_match_lists([$*], [_ | L]) ->
     wildcard_match_lists_valid(L, true);
 
-wildcard_match_lists([$*, C | Pattern], [_ | L]) ->
+wildcard_match_lists([$*], L) ->
+    wildcard_match_lists_valid(L, true);
+
+wildcard_match_lists([$*, C | Pattern], L) ->
     true = C =/= $*,
     wildcard_match_lists_pattern(Pattern, C, L);
 
