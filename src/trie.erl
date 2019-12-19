@@ -552,6 +552,11 @@ fold_match_node_1([H], F, A, Prefix, {I0, _, Data})
             A
     end;
 
+fold_match_node_1([H, $* | TNext], F, A, Prefix, {I0, I1, Data})
+    when is_integer(H) ->
+    fold_match_element_1([$* | TNext], F, A, 1, I1 - I0 + 2, I0 - 1,
+                         Prefix, [], Data);
+
 fold_match_node_1([H | T], F, A, Prefix, {I0, _, Data})
     when is_integer(H) ->
     {ChildNode, Value} = erlang:element(H - I0 + 1, Data),
@@ -584,7 +589,7 @@ fold_match_element_1(Match, F, A, I, N, Offset, Prefix, Mid, Data)
     end;
 
 fold_match_element_1([$* | T] = Match, F, A, I, N, Offset, Prefix, Mid, Data) ->
-    {Node, Value} = erlang:element(I, Data),    
+    {Node, Value} = erlang:element(I, Data),
     case Node of
         {I0, I1, NextData} ->
             NewMid = [(Offset + I) | Mid],
@@ -658,7 +663,7 @@ fold_match_element_N([$*] = Match, F, A, I, N, Offset, Prefix, Mid, Data) ->
                 I + 1, N, Offset, Prefix, Mid, Data)
     end;
 
-fold_match_element_N([$* | T] = Match, F, A, I, N, Offset, Prefix, Mid, Data) ->
+fold_match_element_N([$* | T] = Match, F, A, I, N, Offset, Prefix, Mid, Data) ->    
     {Node, Value} = erlang:element(I, Data),
     case T of
         [C | NewMatch] when C =:= Offset + I ->
